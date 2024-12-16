@@ -1,4 +1,4 @@
-import { Box, Button, Card, CircularProgress, Divider, Snackbar, TextField, Tooltip, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Card, CircularProgress, Divider, Snackbar, TextField, Tooltip, Typography } from "@mui/material";
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
@@ -7,13 +7,16 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from "axios";
 
-
 const Products = () => {
 
     const [cart, setCart] = useState([]);
-    const [searchProduct, setSearchProduct] = useState()
+    const [searchProduct, setSearchProduct] = useState();
+    const [allProducts, setAllProducts] = useState([]);
     const [open, setOpen] = React.useState(false);
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
+    const [categories, setCategories] = useState([]);
+    const [categoryFilter, setCategoryFilter] = useState({});
+
 
     const handleClick = () => {
         setOpen(true);
@@ -31,7 +34,6 @@ const Products = () => {
     const addCart = (product) => {
         const ifExist = cart.find((cart) => (cart.name === product.name))
         if (!ifExist) {
-
             setCart((prev) => [...cart, product]);
         } else {
             setOpen(true)
@@ -66,27 +68,59 @@ const Products = () => {
             try {
                 setIsLoading(true)
                 const products = await axios.get('https://fakestoreapi.com/products')
-                setSearchProduct(products.data,);
+
                 if (products.status === 200) {
                     setIsLoading(false)
+                    setSearchProduct(products?.data,);
+                    setAllProducts(products?.data,);
+
+                    const findCategories = products?.data.map((category) => {
+                        return {
+                            label: category.category,
+                            value: category.category,
+                        }
+                    });
+
+
+                    const filteredCategories = findCategories.filter((category, index, self) =>
+                        index === self.findIndex
+                            ((item) => item.value === category.value))
+                    setCategories(filteredCategories);
+
                 } else {
 
                 }
             } catch (error) {
 
-            }
-
+            };
         }
         fetchProducts()
 
     }, [cart])
 
+    useEffect(() => {
+        const filterCategories = allProducts.filter((category) => category.category === categoryFilter.label)
+        setSearchProduct(filterCategories);
+
+    }, [categoryFilter])
+
 
 
     return (
         <>
-            <Box className="container ms-lg-5 ps-lg-5">
+            <Box className="container ms-lg-5 ps-lg-5 d-flex justify-content-between">
                 <TextField onChange={searchHandler} size="small" className="ms-5 mt-3" />
+                <Autocomplete
+                    className="mt-4 me-5"
+                    size="small"
+                    disablePortal
+                    options={categories}
+                    onChange={(e, newValue) => {
+                        setCategoryFilter(newValue)
+                    }}
+                    sx={{ width: 200 }}
+                    renderInput={(params) => <TextField {...params} label="Categories" />}
+                />
             </Box>
 
             <div>
