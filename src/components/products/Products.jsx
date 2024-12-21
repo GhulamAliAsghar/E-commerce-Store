@@ -6,6 +6,8 @@ import React, { useEffect, useState } from "react";
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../slices/add-cart/addCartSlice";
 
 const Products = () => {
 
@@ -16,6 +18,7 @@ const Products = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [categories, setCategories] = useState([]);
     const [categoryFilter, setCategoryFilter] = useState({});
+    const dispatch = useDispatch()
 
 
     const handleClick = () => {
@@ -154,7 +157,7 @@ const Products = () => {
                                         <Box sx={{ display: "flex", justifyContent: "space-around", paddingTop: "20px" }}>
                                             <ShareIcon />
                                             <FavoriteIcon />
-                                            <AddShoppingCartIcon onClick={() => { addCart(product) }} />
+                                            <AddShoppingCartIcon onClick={() => dispatch(addToCart())} />
                                         </Box>
 
                                     </Card>

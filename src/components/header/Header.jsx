@@ -17,6 +17,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Cart from '../cart/Cart';
+import { useSelector } from 'react-redux';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -64,12 +65,17 @@ export default function Header() {
     const [cartItems, setCartItems] = React.useState([]);
     const [open, setOpen] = React.useState(false);
 
+
+
+
     const toggleDrawer = (newOpen) => () => {
         setOpen(newOpen);
     };
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+    const count = useSelector((state) => state.counter)
+    console.log(count);
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -132,7 +138,7 @@ export default function Header() {
         >
             <MenuItem>
                 <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={cartItems?.length} color="error">
+                    <Badge badgeContent={count?.value} color="error">
                         <ShoppingCartIcon onClick={toggleDrawer(true)} />
                     </Badge>
                 </IconButton>
@@ -165,11 +171,11 @@ export default function Header() {
         </Menu>
     );
 
-    React.useEffect(()=>{
+    React.useEffect(() => {
         const productsArr = localStorage.getItem("cartList")
         const productsObj = JSON.parse(productsArr)
         setCartItems(productsObj)
-    },[])
+    }, [])
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -195,7 +201,7 @@ export default function Header() {
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                            <Badge badgeContent={cartItems?.length} color="error">
+                            <Badge badgeContent={count.value} color="error">
                                 <ShoppingCartIcon onClick={toggleDrawer(true)} />
                             </Badge>
                         </IconButton>
